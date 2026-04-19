@@ -2,7 +2,7 @@
 .env
 
 # Volumes Docker
-postgres_data/
+glpi_files/
 grafana_data/
 prometheus_data/
 mariadb_data/
