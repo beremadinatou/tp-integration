@@ -1,0 +1,16 @@
+# Fichiers sensibles
+.env
+
+# Volumes Docker
+postgres_data/
+grafana_data/
+prometheus_data/
+mariadb_data/
+
+# Fichiers temporaires
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
