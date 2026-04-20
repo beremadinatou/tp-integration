@@ -61,7 +61,7 @@ docker compose logs -f glpi
 Attendre de voir `Apache started` dans les logs.
 
 ### 5. Installer GLPI
-Va sur `http://localhost:8080` et suis l'assistant d'installation :
+Aller sur `http://localhost:8080` et suivre l'assistant d'installation :
 - Serveur SQL : `mariadb`
 - Utilisateur : `glpi_user`
 - Mot de passe : `(valeur de MYSQL_PASSWORD dans .env)`
