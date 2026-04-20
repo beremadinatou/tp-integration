@@ -88,7 +88,6 @@ Va sur `http://localhost:8080` et suis l'assistant d'installation :
 | Login | `glpi` |
 | Mot de passe | `glpi` |
 
-> Changer le mot de passe après la première connexion !
 
 ### Grafana
 | Champ | Valeur |
@@ -112,7 +111,108 @@ docker compose down -v
 > Cette commande supprime toutes les données !
 
 ---
+## Dashboards Grafana
 
+Les dashboards sont provisionnés automatiquement au démarrage
+de la stack et sont accessibles sur `http://localhost:3000`.
+
+> Pour visualiser les données dans les panels, il est
+> nécessaire de créer au préalable des données dans GLPI
+> (tickets, ordinateurs, périphériques).
+> Voir la section **Jeu de données GLPI** ci-dessous.
+
+### Dashboard 1 — GLPI Dashboard (`glpi_dashboard.json`)
+Connecté à la datasource **GLPI-MySQL**. Contient 6 panels :
+
+**Panel 1 — Vue d'ensemble (Stat panels)**
+- Nombre total de tickets ouverts
+- Nombre de tickets créés aujourd'hui
+- Nombre d'équipements enregistrés (ordinateurs + périphériques)
+
+**Panel 2 — Répartition des tickets par statut (Pie Chart)**
+- Distribution des tickets selon leur statut
+  (Nouveau, En cours, En attente, Résolu, Clos)
+
+**Panel 3 — Évolution des tickets dans le temps (Time Series)**
+- Nombre de tickets créés par jour sur les 30 derniers jours
+
+**Panel 4 — Top 5 des catégories de tickets (Bar Chart)**
+- Les catégories GLPI générant le plus de tickets
+
+**Panel 5 — Tableau des tickets récents (Table panel)**
+- Liste des 20 derniers tickets avec :
+  ID, titre, statut, date de création, priorité
+
+**Panel 6 — Tickets par priorité (Bar Chart)**
+- Distribution des tickets selon leur priorité
+  (Très basse, Basse, Moyenne, Haute, Très haute, Majeure)
+
+---
+
+### Dashboard 2 — Monitoring Dashboard (`monitoring_dashboard.json`)
+Connecté à la datasource **Prometheus**. Contient 4 panels :
+
+**Panel A — CPU par conteneur (Time Series)**
+- Utilisation CPU en pourcentage pour chaque conteneur
+- Requête : `rate(container_cpu_usage_seconds_total{name!=""}[5m]) * 100`
+
+**Panel B — Mémoire utilisée par conteneur (Time Series)**
+- Mémoire consommée par conteneur en MiB
+- Requête : `container_memory_usage_bytes{name!=""} / 1024 / 1024`
+
+**Panel C — Trafic réseau par conteneur (Time Series)**
+- Réseau entrant : `rate(container_network_receive_bytes_total{name!=""}[5m])`
+- Réseau sortant : `rate(container_network_transmit_bytes_total{name!=""}[5m])`
+
+**Panel D — Conteneurs en cours d'exécution (Stat)**
+- Nombre de conteneurs actuellement actifs
+- Requête : `count(container_last_seen{name!=""})`
+
+---
+
+## Jeu de données GLPI
+
+Pour visualiser les panels Grafana, les données suivantes 
+ont été enregistrées dans GLPI :
+
+### Tickets (10 tickets)
+| Titre | Statut | Priorité | Catégorie |
+|---|---|---|---|
+| Problème de mail | Nouveau | Moyenne | Réseau |
+| Site web | En cours (attribué) | Haute | Réseau |
+| PC ne démarre pas | En cours (attribué) | Haute | Matériels |
+| Imprimante en panne | En cours (attribué) | Haute | Matériels |
+| Email ne fonctionne pas | En attente | Moyenne | Réseau |
+| Écran noir | Clos | Haute | Matériels |
+| Virus détecté | En cours (attribué) | Majeure | Réseau |
+| Mise à jour Windows | Résolu | Moyenne | Matériels |
+| VPN ne connecte pas | En cours (planifié) | Moyenne | Réseau |
+| Clavier cassé | En cours (attribué) | Moyenne | Matériels |
+
+### Équipements
+
+**Ordinateurs (5)**
+| Nom | Type |
+|---|---|
+| PC-Bureau-01 | Ordinateur |
+| PC-Bureau-02 | Ordinateur |
+| Laptop-RH-01 | Portable |
+| Laptop-IT-01 | Portable |
+| Serveur-Web-01 | Serveur |
+
+**Périphériques (3)**
+| Nom | Type |
+|---|---|
+| Imprimante-RDC | Imprimante |
+| Scanner-01 | Scanner |
+| Webcam-Conf | Webcam |
+
+### Catégories créées
+- Réseau
+- Matériels
+- Sans catégorie (tickets système)
+
+---
 ## Réponses aux questions PromQL
 
 ### Question 1 — Targets configurés
