@@ -6,7 +6,7 @@
 
 **Groupe** :
 - BERE Madinatou
-- Boketonou Fréderic
+- BOKETONOU Fréderic
 - ILBOUDO Thérèse
 
 ---
